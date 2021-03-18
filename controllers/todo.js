@@ -14,7 +14,7 @@ exports.createTodo = async (req, res, next) => {
 
         try{
             await todo.save();
-            res.send('success');
+            res.json({'status': 'successfully inserted'});
         } catch (err) {
             if(!err.statusCode)
                 err.statusCode = 500;
@@ -24,6 +24,20 @@ exports.createTodo = async (req, res, next) => {
 };
 
 //Delete a TODO
+exports.deleteATodo = (req, res, next) => {
+
+    const id = req.query.id;
+    console.log(id);
+    Todo.findByIdAndDelete(id, (err,todo) => {
+        if(err)
+            next(err);
+        else{
+            console.log("Deleted : ",todo);
+            res.json({"status": "successfully deleted", "todo": todo});
+        }    
+            
+    });
+};
 
 //Update a TODO
 
