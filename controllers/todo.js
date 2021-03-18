@@ -25,9 +25,9 @@ exports.createTodo = async (req, res, next) => {
 };
 
 //Delete a TODO
-exports.deleteATodo = (req, res, next) => {
+exports.deleteATodo = async (req, res, next) => {
     const id = req.query.id;
-    Todo.findByIdAndDelete(id, (err,todo) => {
+    await Todo.findByIdAndDelete(id, (err,todo) => {
         if(err)
             next(err);
         else{
@@ -43,12 +43,11 @@ exports.deleteATodo = (req, res, next) => {
     });
 };
 
-//////Update a TODO//////
-//Patch TODO
-exports.patchTodo = (req, res, next) => {
+//Update a TODO
+exports.patchTodo = async (req, res, next) => {
     const updatedTodo = req.body;
     const id = req.query.id;
-    Todo.updateOne({_id: ObjectId(id)}, {$set: updatedTodo}, (err,result) => {
+    await Todo.updateOne({_id: ObjectId(id)}, {$set: updatedTodo}, (err,result) => {
         if(err)
             next(err);
         else
@@ -57,8 +56,8 @@ exports.patchTodo = (req, res, next) => {
 };
 
 //Get All TODOs
-exports.getAllTodos = (req, res, next) => {
-    Todo.find({}, (err, todos) => {
+exports.getAllTodos = async (req, res, next) => {
+    await Todo.find({}, (err, todos) => {
         if(err)
             next(err);
         else
@@ -66,27 +65,76 @@ exports.getAllTodos = (req, res, next) => {
         });
 };
 
-//Find TODOs
-exports.findTodos = (req, res, next) => {
-    const searchKeyword = req.query.searchKeyword;
-    Todo.find({
-        "title": /searchKeyword/
-    }, (err, result) => {
-        if(err)            
-            next(err);
-        
-        console.log(result);
-        res.json({'todos':result});
-    });
+//Find TODOs by searchKeyword
+exports.findTodosByKeyword = (req, res, next) => {
+    if(!req.query.searchKeyword)
+        next();
+    else{
+        const searchKeyword = req.query.searchKeyword;
+        Todo.find({
+            "title":  {$regex: `${searchKeyword}`}
+        }, (err, result) => {
+            if(err)            
+                next(err);        
+            res.json({'todos':result});
+        });
+    }    
 };
 
-exports.filterTodos = (req, res, next) => {
-    const filterByPriority = req.query.priority;
-    const filterByColor = req.query.color;
-    Todo.find({"priority": filterByPriority}, (err, result) => {
-        if(err)            
-            next(err);
-        res.json({'todos': result});
-    });
+//Find TODOs by priority
+exports.findTodosByPriority = (req, res, next) => {
+    if(!req.query.priority)
+        next();
+    else{
+        const filterByPriority = req.query.priority;
+        Todo.find({"priority": filterByPriority}, (err, result) => {
+            if(err)            
+                next(err);
+            res.json({'todos': result});
+        });
+    }    
+};
 
+//Find TODOs by color
+exports.findTodosByColor = (req, res, next) => {
+    if(!req.query.color)
+        next();
+    else{
+        const filterByColor = req.query.color;
+        Todo.find({"color": filterByColor}, (err, result) => {
+            if(err)            
+                next(err);
+            res.json({'todos': result});
+        });
+    }
+};
+
+//Find TODOs after a specific start date
+exports.findTodosByStartDate = (req, res, next) => {
+    if(!req.query.startDate)
+        next();
+    else{
+        const startDate = new Date(req.query.startDate);
+        console.log(startDate);
+        Todo.find({"timestamp": { $gt: `${startDate}` }}, (err, result) => {
+            if(err)            
+                next(err);
+            res.json({'todos': result});
+        });
+    }
+};
+
+//Find TODOs before a specific end date
+exports.findTodosByEndDate = (req, res, next) => {
+    if(!req.query.endDate)
+        next();
+    else{
+        const endDate = new Date(req.query.endDate);
+        console.log(endDate);
+        Todo.find({"timestamp": { $lt: `${endDate}` }}, (err, result) => {
+            if(err)            
+                next(err);
+            res.json({'todos': result});
+        });
+    }
 };

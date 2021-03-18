@@ -12,6 +12,12 @@ const todoSchema = new mongoose.Schema({
     priority: {
         type: String,
         required: true
+    },
+},
+{
+    timestamps: {
+        createdAt: 'timestamp',
+        updatedAt: false
     }
 });
 
