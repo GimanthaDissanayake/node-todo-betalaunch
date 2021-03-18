@@ -3,15 +3,33 @@ const express = require("express");
 const bodyParser = require('body-parser');
 require("dotenv").config();
 
+//import the routes
+const todoRoutes = require('./routes/todo');
+
 const app = express();
 
+//import database connection
 require('./util/database');
 
-//use body parser to parse json data
-app.use(bodyParser.urlencoded({extended: false}));
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
+//use body parser to parse json data
+app.use(bodyParser.json());
+
+//middleware to handle routes
+app.use('/api/todo/',todoRoutes);
+app.get('/api/', (req, res) => {
+    res.send('App is running!');
+});
+
+//middleware to handle errors
+app.use((error, req, res, next) => {
+    console.log(error);
+    const status = error.statusCode || 500;
+    const message = error.message;
+    const data = error.data;   
+    res.status(status).json({message: message, data: data});
 });
 
 //start the server
