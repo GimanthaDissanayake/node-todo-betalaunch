@@ -25,15 +25,18 @@ exports.createTodo = async (req, res, next) => {
 
 //Delete a TODO
 exports.deleteATodo = (req, res, next) => {
-
     const id = req.query.id;
-    console.log(id);
     Todo.findByIdAndDelete(id, (err,todo) => {
         if(err)
             next(err);
         else{
-            console.log("Deleted : ",todo);
-            res.json({"status": "successfully deleted", "todo": todo});
+            if(todo){
+                console.log('Deleted : ',todo);
+                res.json({'status': 'successfully deleted', 'todo': todo});
+            } else {
+                res.json({'status':'todo not found'});
+            }
+            
         }    
             
     });
