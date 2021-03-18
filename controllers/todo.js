@@ -1,5 +1,6 @@
 const Todo = require("../models/todo");
 var isHexcolor = require('is-hexcolor');
+const { ObjectId } = require("mongodb");
 
 //Create a new TODO
 exports.createTodo = async (req, res, next) => {
@@ -43,44 +44,49 @@ exports.deleteATodo = (req, res, next) => {
 };
 
 //////Update a TODO//////
-// Get a single TODO
-exports.getUpdateTodo = (req,res,next) => {
+//Patch TODO
+exports.patchTodo = (req, res, next) => {
+    const updatedTodo = req.body;
     const id = req.query.id;
-    Todo.findById(id, (err,todo) => {
-        if(!todo)
-            res.json({'status':'ToDo not found'});
-        else if(err)
-            next(err);
-        else{
-            res.json({'todo': todo});
-        }
-    });
-};
-//Post the updated Todo
-exports.postUpdatedTodo = (req,res,next) => {
-    const id = req.query.id;
-    const updatedTodo = new Todo({
-        title: req.body.title,
-        color: req.body.color,
-        priority: req.body.priority
-    });
-    Todo.findByIdAndUpdate(id, {
-            title:updatedTodo.title,
-            color:updatedTodo.color,
-            priority:updatedTodo.priority
-        }, (err) => {
+    Todo.updateOne({_id: ObjectId(id)}, {$set: updatedTodo}, (err,result) => {
         if(err)
             next(err);
-        else {
-            res.json({'status': 'successfully updated'});
-        }
+        else
+            res.json({'status': result});
     });
 };
 
 //Get All TODOs
 exports.getAllTodos = (req, res, next) => {
     Todo.find({}, (err, todos) => {
-        console.log(todos);
-        res.send({ todoList: todos });
+        if(err)
+            next(err);
+        else
+            res.json({ todoList: todos });
         });
+};
+
+//Find TODOs
+exports.findTodos = (req, res, next) => {
+    const searchKeyword = req.query.searchKeyword;
+    Todo.find({
+        "title": /searchKeyword/
+    }, (err, result) => {
+        if(err)            
+            next(err);
+        
+        console.log(result);
+        res.json({'todos':result});
+    });
+};
+
+exports.filterTodos = (req, res, next) => {
+    const filterByPriority = req.query.priority;
+    const filterByColor = req.query.color;
+    Todo.find({"priority": filterByPriority}, (err, result) => {
+        if(err)            
+            next(err);
+        res.json({'todos': result});
+    });
+
 };

@@ -18,10 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 //middleware to handle routes
-app.use('/api/todo/',todoRoutes);
-app.get('/api/', (req, res) => {
-    res.send('App is running!');
-});
+app.use('/api/',todoRoutes);
 
 //middleware to handle errors
 app.use((error, req, res, next) => {
