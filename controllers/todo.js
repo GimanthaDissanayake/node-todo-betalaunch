@@ -42,9 +42,42 @@ exports.deleteATodo = (req, res, next) => {
     });
 };
 
-//Update a TODO
+//////Update a TODO//////
+// Get a single TODO
+exports.getUpdateTodo = (req,res,next) => {
+    const id = req.query.id;
+    Todo.findById(id, (err,todo) => {
+        if(!todo)
+            res.json({'status':'ToDo not found'});
+        else if(err)
+            next(err);
+        else{
+            res.json({'todo': todo});
+        }
+    });
+};
+//Post the updated Todo
+exports.postUpdatedTodo = (req,res,next) => {
+    const id = req.query.id;
+    const updatedTodo = new Todo({
+        title: req.body.title,
+        color: req.body.color,
+        priority: req.body.priority
+    });
+    Todo.findByIdAndUpdate(id, {
+            title:updatedTodo.title,
+            color:updatedTodo.color,
+            priority:updatedTodo.priority
+        }, (err) => {
+        if(err)
+            next(err);
+        else {
+            res.json({'status': 'successfully updated'});
+        }
+    });
+};
 
-//Get TODOs
+//Get All TODOs
 exports.getAllTodos = (req, res, next) => {
     Todo.find({}, (err, todos) => {
         console.log(todos);
