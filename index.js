@@ -1,13 +1,14 @@
 //import 3rd party libraries/modules
 const express = require("express");
 const bodyParser = require('body-parser');
-const dotenv = require("dotenv");
+require("dotenv").config();
 
 const app = express();
-dotenv.config();
+
+require('./util/database');
 
 //use body parser to parse json data
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
