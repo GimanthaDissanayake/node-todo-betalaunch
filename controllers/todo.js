@@ -130,7 +130,6 @@ exports.findTodosByEndDate = (req, res, next) => {
         next();
     else{
         const endDate = new Date(req.query.endDate);
-        console.log(endDate);
         Todo.find({"timestamp": { $lt: `${endDate}` }}, (err, result) => {
             if(err)            
                 next(err);

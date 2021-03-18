@@ -13,7 +13,6 @@ require('./util/database');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
-
 //use body parser to parse json data
 app.use(bodyParser.json());
 

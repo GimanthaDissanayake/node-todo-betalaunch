@@ -4,21 +4,23 @@ const todoController = require('../controllers/todo');
 
 const router = express();
 
-// /api/todo => GET **COMPLETE**
+// /api/todo => GET 
 router.get('/todos', todoController.getAllTodos);
 
-// /api/todo {todo} => POST **COMPLETE**
+// /api/todo {todo} => POST 
 router.post('/todo', todoController.createTodo);
 
-// /api/todo/?id => PATCH **COMPLETE**
+// /api/todo/?id => PATCH 
 router.patch('/todo', todoController.patchTodo);
 
-// /api/todo/delete/?id => DELETE **COMPLETE**
+// /api/todo/delete/?id => DELETE 
 router.delete('/todo/', todoController.deleteATodo);
 
-// /api/todo/?searchKeyword
-// /api/todo/?priority **COMPLETE**
-// /api/todo/?color **COMPLETE**
+// /api/todo/?searchKeyword 
+// /api/todo/?priority 
+// /api/todo/?color 
+// /api/todo/?startDate 
+// /api/todo/?endDate 
 router.get('/todo', todoController.findTodosByKeyword, 
                     todoController.findTodosByPriority, 
                     todoController.findTodosByColor,
